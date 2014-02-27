@@ -1076,3 +1076,49 @@ aside.gdbar {
     font-family: monospace !important;
   }
 }
+
+#how-it-works {
+  height: 280px;
+  $section-top-padding: 100px;
+  padding-top: $section-top-padding;
+
+  $flow-image-width: 134px;
+  .flow {
+    font-size: 18px;
+    .flow-item-image {
+      height: 110px;
+      margin: 20px 0;
+      width: $flow-image-width;
+      &.flow-item-1 {
+        background: url("/images/howworks_01.png") no-repeat center center;
+      }
+      &.flow-item-2 {
+        background: url("/images/howworks_02.png") no-repeat center center;
+      }
+      &.flow-item-3 {
+        background: url("/images/howworks_03.png") no-repeat center center;
+      }
+      &.flow-item-4 {
+        background: url("/images/howworks_04.png") no-repeat center center;
+      }
+      &.flow-item-5 {
+        background: url("/images/howworks_05.png") no-repeat center center;
+      }
+    }
+
+    .flow-item {
+      width: $flow-image-width;
+      padding-left: 46px;
+      float: left;
+      text-align: center;
+      &:not(:first-child) {
+        background: url("/images/flow_right_arrow.png") no-repeat 2px 60px;
+      }
+      &:first-child {
+        p {
+          padding-left: 20px;
+        }
+      }
+    }
+  }
+}
