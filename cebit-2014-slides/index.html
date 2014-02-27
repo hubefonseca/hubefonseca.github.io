@@ -42,6 +42,25 @@ URL: https://code.google.com/p/io-2012-slides
                 }));
             }
         });
+
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "js/MathJax/MathJax.js";
+
+        var config = 'MathJax.Hub.Config({' +
+                '  extensions: ["tex2jax.js"],' +
+                '  jax: ["input/TeX","output/HTML-CSS"],' +
+                '  tex2jax: {inlineMath: [["$","$"]]}' +
+                '});';
+
+        if (window.opera) {
+            script.innerHTML = config
+        }
+        else {
+            script.text = config
+        }
+
+        document.getElementsByTagName("head")[0].appendChild(script);
     });
 </script>
 
@@ -188,6 +207,51 @@ URL: https://code.google.com/p/io-2012-slides
         <div class="author">
             Gavin Andresen - BitCoin Foundation<br>
             <a href="https://bitcoinfoundation.org/blog/?p=16">https://bitcoinfoundation.org/blog/?p=16</a>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Hashes são uniformemente distribuídos</li>
+                <li>Calcular a probabilidade de ter colisão</li>
+                <li>Um pouco mais de matemáticas</li>
+                <li>Cada item k funções de hash, n itens, k*n bits setados</li>
+                <li>Wikipedia, Inverso</li>
+                <li>k funções de hash</li>
+            </ul>
+        </section>
+    </aside>
+
+    <hgroup>
+        <h2>Bloom Filters</h2>
+
+        <h3>No false negatives</h3>
+    </hgroup>
+    <article class="fade centered">
+        <p>Para $n$ elementos no conjunto, $k$ funções de hash e $m$ bits</p>
+
+        <div class="pseudo-code">
+            <div>
+                <span>Probabilidade de não-colisão após $n$ inserções com $k$ funções de hash:</span>
+                \begin{equation*}
+                \left(1-\frac{1}{m}\right)^{kn}
+                \end{equation*}
+            </div>
+            <div>
+                <span>Invertendo, probabilidade de colisão por função de hash:</span>
+                \begin{equation*}
+                1-\left(1-\frac{1}{m}\right)^{kn}
+                \end{equation*}
+            </div>
+            <div>
+                <span>Para $k$ funções de hash:</span>
+                \begin{equation*}
+                \left(1-\left[1-\frac{1}{m}\right]^{kn}\right)^k
+                \end{equation*}
+            </div>
         </div>
     </article>
 </slide>
