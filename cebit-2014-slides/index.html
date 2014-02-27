@@ -38,7 +38,7 @@ URL: https://code.google.com/p/io-2012-slides
                 var $textArea = $codeEl.find('> textarea');
                 $codeEl.data('codemirror', CodeMirror.fromTextArea($textArea.get(0), {
                     mode: $codeEl.data('lang'),
-					readOnly:true
+                    readOnly: true
                 }));
             }
         });
@@ -146,11 +146,11 @@ URL: https://code.google.com/p/io-2012-slides
             <li>O(n) in time and O(1) in space, <strong>always</strong></li>
         </ul>
 
-				<pre class="code" data-lang="ppl">
-					<textarea>StockTick symbol:IBM => price#avg every minute</textarea>
-				</pre>
+        <pre class="code" data-lang="ppl">
+            <textarea>StockTick symbol:IBM => price#avg every minute</textarea>
+        </pre>
 
-        </pre></article>
+    </article>
 
 </slide>
 
@@ -295,13 +295,20 @@ URL: https://code.google.com/p/io-2012-slides
 </slides>
 
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-  ga('create', 'UA-48489515-1', 'hubefonseca.github.io');
-  ga('send', 'pageview');
+    ga('create', 'UA-48489515-1', 'hubefonseca.github.io');
+    ga('send', 'pageview');
 
 </script>
 
