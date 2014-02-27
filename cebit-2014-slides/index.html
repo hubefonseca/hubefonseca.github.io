@@ -37,7 +37,8 @@ URL: https://code.google.com/p/io-2012-slides
             if ($codeEl.length && !$codeEl.data('codemirror')) {
                 var $textArea = $codeEl.find('> textarea');
                 $codeEl.data('codemirror', CodeMirror.fromTextArea($textArea.get(0), {
-                    mode: $codeEl.data('lang')
+                    mode: $codeEl.data('lang'),
+					readOnly:true
                 }));
             }
         });
