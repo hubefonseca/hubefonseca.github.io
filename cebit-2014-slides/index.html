@@ -1,0 +1,289 @@
+<!--
+Google IO 2012 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahe <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google IO 2012</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="all" href="theme/css/codemirror.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/codemirror.js"></script>
+  <script src="js/codemirror-ppl.js"></script>
+</head>
+
+<script>
+$(function() {
+	$('slide').on('slideenter', function(e) {
+		var $el = $(e.target);
+		var $codeEl = $el.find('pre.code');
+		if ($codeEl.length && !$codeEl.data('codemirror')) {
+			var $textArea = $codeEl.find('> textarea');
+			$codeEl.data('codemirror', CodeMirror.fromTextArea($textArea.get(0), {
+				mode: $codeEl.data('lang')
+			}));
+		}
+	});
+});
+</script>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+<!-- <slide class="logoslide nobackground">
+  <article class="flexbox vcenter">
+    <span><img src="images/google_developers_logo.png"></span>
+  </article>
+</slide>
+ -->
+<slide class="title-slide segue nobackground">
+  <aside class="gdbar"><img src="images/intelie-logo.png"></aside>
+  <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+  <hgroup class="auto-fadein">
+    <h1 data-config-title><!-- populated from slide_config.json --></h1>
+    <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+    <p data-config-presenter><!-- populated from slide_config.json --></p>
+  </hgroup>
+</slide>
+
+
+<slide class="image" >
+  
+    <hgroup>
+      <h2>Intelie Live Platform</h2>
+      <h3>A dive in</h3>
+    </hgroup>
+    <article ><p><img alt="Mobile vs desktop users" src="image.png" /></p></article>
+ 
+</slide>
+
+<slide >
+  
+    <hgroup>
+      <h2></h2>
+      <h3></h3>
+    </hgroup>
+    <article class="flexbox vcenter"><h2>What is it?</h2>
+
+	<p><br/><br/></p>
+	<p>Live is a real time data analysis platform, that enables complex processing to be performed in very low time and memory footprint.</p></article>
+
+</slide>
+
+<slide class="segue dark nobackground" >
+  
+    <aside class="gdbar"><img src="images/intelie-logo.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Architecture</h2>
+      <h3>How does it work</h3>
+    </hgroup>
+  
+</slide>
+
+<slide class="segue dark nobackground" >
+  
+    <aside class="gdbar"><img src="images/intelie-logo.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Intelie Pipes</h2>
+      <h3>Processing all the data</h3>
+    </hgroup>
+  
+</slide>
+
+<slide  >
+  
+    <hgroup>
+      <h2></h2>
+      <h3></h3>
+    </hgroup>
+    <article class="flexbox vcenter"><h2>Intelie Pipes</h2>
+
+<p><br/><br/></p>
+<p>Intelie Pipes is the engine that powers the Live Platform</p></article>
+ 
+</slide>
+
+<slide >
+  
+    <hgroup>
+      <h2>Intelie Pipes</h2>
+      <h3>What is good about it?</h3>
+    </hgroup>
+    <article >
+	<ul>
+<li>Filtering and aggregating over big data <strong>streams</strong></li>
+<li>Provides a <strong>simple</strong> yet powerful language to perform aggregation</li>
+<li>Partition tolerant (enables <strong>distribution</strong>)</li>
+<li>O(n) in time and O(1) in space, <strong>always</strong></li>
+</ul>
+
+<pre class="code" data-lang="ppl">
+	<textarea>StockTick symbol:IBM => price#avg every minute</textarea>
+</pre>
+
+</pre></article>
+ 
+</slide>
+
+<slide class="segue dark quote nobackground">
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Gavin Andresen Bitcoin Foundation.</li>
+          <li>Usa Bloom para determinar quais transações são importantes</li>
+          <li>O nó cliente envia um filtro de bloom que sabe decidir se a transação é importante</li>
+          <li>Os outros nós filtram as transações</li>
+          <li>Falsos positivos não causam problemas</li>
+        </ul>
+      </section>
+    </aside>
+
+    <aside class="gdbar right bottom"><img src="images/intelie-logo.png"></aside>
+    <article class="flexbox vleft auto-fadein">
+      <q>
+        Downloading a few gigabytes of data before you can start using Bitcoin is not a good first user experience. (...) added support for <b>bloom filters</b> to get just the transactions relevant to your wallet.
+      </q>
+      <div class="author">
+        Gavin Andresen - BitCoin Foundation<br>
+        <a href="https://bitcoinfoundation.org/blog/?p=16">https://bitcoinfoundation.org/blog/?p=16</a>
+      </div>
+    </article>
+  </slide>
+
+<slide class="title-slide" >
+  
+    <hgroup>
+      <h2>Big Title Slide</h2>
+      <h3></h3>
+    </hgroup>
+    <article ></article>
+ 
+</slide>
+
+<slide  >
+  
+    <hgroup>
+      <h2>Code Example</h2>
+      <h3></h3>
+    </hgroup>
+    <article ><p>Media Queries are sweet:</p>
+<pre class="prettyprint" data-lang="css">
+@media screen and (max-width: 640px) {
+  #sidebar { display: none; }
+}
+</pre></article>
+ 
+</slide>
+
+<slide  >
+  
+    <hgroup>
+      <h2>Once more, with JavaScript</h2>
+      <h3></h3>
+    </hgroup>
+    <article ><pre class="prettyprint" data-lang="javascript">
+function isSmall() {
+  return window.matchMedia("(min-device-width: ???)").matches;
+}
+
+function hasTouch() {
+  return Modernizr.touch;
+}
+
+function detectFormFactor() {
+  var device = DESKTOP;
+  if (hasTouch()) {
+    device = isSmall() ? PHONE : TABLET;
+  }
+  return device;
+}
+</pre></article>
+ 
+</slide>
+
+<slide  >
+  
+    <hgroup>
+      <h2>Some numbers</h2>
+      <h3>In one deployment</h3>
+    </hgroup>
+    <article ><ul>
+<li>4 physical machines in cluster</li>
+<li>full-text search in a 15 TB dataset</li>
+<li>20,000 messages/sec in average (~7 Mb/s) </li>
+<li>peaks of 80,000 messages/sec (~30 Mb/sec)</li>
+<li>
+<p>1.728 billion messages/day in average</p>
+<p><img alt="Twitter data volume" src="images/twitter_volume.png" /></p>
+</li>
+</ul></article>
+ 
+</slide>
+
+<slide  >
+  
+    <hgroup>
+      <h2>Centered content</h2>
+      <h3></h3>
+    </hgroup>
+    <article class="flexbox vcenter"><p>This content should be centered!</p></article>
+ 
+</slide>
+
+
+<slide class="thank-you-slide segue nobackground">
+  <aside class="gdbar right"><img src="images/intelie-logo.png"></aside>
+  <article class="flexbox vleft auto-fadein">
+    <h2>&lt;Thank You!&gt;</h2>
+    <p>Important contact information goes here.</p>
+  </article>
+  <p class="auto-fadein" data-config-contact>
+    <!-- populated from slide_config.json -->
+  </p>
+</slide>
+
+<!-- <slide class="logoslide dark nobackground">
+  <article class="flexbox vcenter">
+    <span><img src="images/google_developers_logo_white.png"></span>
+  </article>
+</slide> -->
+
+<slide class="backdrop"></slide>
+
+</slides>
+
+<script>
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-XXXXXXXX-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>
