@@ -2,7 +2,7 @@ var SLIDE_CONFIG = {
   // Slide settings
   settings: {
     title: 'Intelie Live Platform',
-    subtitle: 'A dive in',
+    subtitle: 'Gathering information from huge volumes of data',
     //eventInfo: {
     //  title: 'Google I/O',
     //  date: '6/x/2013'
