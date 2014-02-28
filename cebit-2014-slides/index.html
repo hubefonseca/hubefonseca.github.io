@@ -27,22 +27,11 @@ URL: https://code.google.com/p/io-2012-slides
     <script src="js/jquery.min.js"></script>
     <script src="js/codemirror.js"></script>
     <script src="js/codemirror-ppl.js"></script>
+    <script src="js/codemirror-python.js"></script>
 </head>
 
 <script>
-    $(function () {
-        $('slide').on('slideenter', function (e) {
-            var $el = $(e.target);
-            var $codeEl = $el.find('pre.code');
-            if ($codeEl.length && !$codeEl.data('codemirror')) {
-                var $textArea = $codeEl.find('> textarea');
-                $codeEl.data('codemirror', CodeMirror.fromTextArea($textArea.get(0), {
-                    mode: $codeEl.data('lang'),
-                    readOnly: true
-                }));
-            }
-        });
-
+    function loadMathjax() {
         var script = document.createElement("script");
         script.type = "text/javascript";
         script.src = "js/MathJax/MathJax.js";
@@ -61,6 +50,30 @@ URL: https://code.google.com/p/io-2012-slides
         }
 
         document.getElementsByTagName("head")[0].appendChild(script);
+    }
+
+    function loadCodemirror($el) {
+        var $codeEl = $el.find('pre.code');
+        if ($codeEl.length && !$codeEl.data('codemirror')) {
+            var $textArea = $codeEl.find('> textarea');
+            $codeEl.data('codemirror', CodeMirror.fromTextArea($textArea.get(0), {
+                mode: $codeEl.data('lang'),
+                readOnly: true
+            }));
+        }
+    }
+
+    $(function () {
+        var mathjaxLoaded = false;
+
+        $('slide').on('slideenter', function (e) {
+            loadCodemirror($(e.target));
+
+            if (!mathjaxLoaded) {
+                loadMathjax();
+                mathjaxLoaded = true;
+            }
+        });
     });
 </script>
 
@@ -178,9 +191,154 @@ URL: https://code.google.com/p/io-2012-slides
         </ul>
 
         <pre class="code" data-lang="ppl">
-            <textarea>StockTick symbol:IBM => price#avg every minute</textarea>
+            <textarea>StockTick symbol:IBM => price#stdev every minute</textarea>
         </pre>
 
+    </article>
+</slide>
+
+<slide>
+    <hgroup>
+        <h2>How to make it distributed?</h2>
+
+        <h3>Parallel algorithms</h3>
+    </hgroup>
+    <article>
+        <pre class="code" data-lang="ppl">
+            <textarea>StockTick symbol:IBM => price#stdev every minute</textarea>
+        </pre>
+
+        <ul>
+            <li>To solve aggregations in a distributed way, we need:</li>
+            <li>A numerically stable algorithm</li>
+            <li>Some state that can be shared among nodes (as small as possible)</li>
+            <li>A bounded (constant) memory usage (the stream is infinite)</li>
+        </ul>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Desvio padrão</li>
+                <li>Mesma ideia da média, mas precisa de mais informações</li>
+                <li>Calma, matemática. Algoritmo paralelo para desvio padrão.</li>
+                <li>Numericamente estável, lembre-se que o fluxo é infinito.</li>
+            </ul>
+        </section>
+    </aside>
+
+    <hgroup>
+        <h2>How to make it distributed?</h2>
+
+        <h3>Standard deviation algorithm example</h3>
+    </hgroup>
+    <article>
+        <pre class="code" data-lang="ppl">
+          <textarea>StockTick symbol:IBM => price#stdev every minute</textarea>
+        </pre>
+
+        <table style="border-bottom: 0">
+            <tr>
+                <td style="color:black">
+                    \begin{equation*}
+                    \bar x_n = \bar x_{n-1} + \frac{x_n - \bar x_{n-1}}{n}
+                    \end{equation*}
+                    \begin{equation*}
+                    M_{2,n}\! =\sum_{i=1}^n (x_i - \bar x_n)^2
+                    \end{equation*}
+                    \begin{equation*}
+                    M_{2,n}\! = M_{2,n-1} + (x_n - \bar x_{n-1})(x_n - \bar x_n)
+                    \end{equation*}
+                    \begin{equation*}
+                    \sigma_n = \frac{M_{2,n}}{n}
+                    \end{equation*}
+                </td>
+                <td style="color:black">
+                    \begin{equation*}
+                    \delta\! = \bar x_B - \bar x_A
+                    \end{equation*}
+                    \begin{equation*}
+                    \bar x_X = \bar x_A + \delta\cdot\frac{n_B}{n_X}
+                    \end{equation*}
+                    \begin{equation*}
+                    M_{2,X} = M_{2,A} + M_{2,B} + \delta^2\cdot\frac{n_A n_B}{n_X}
+                    \end{equation*}
+                </td>
+            </tr>
+        </table>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Então, o que é transmitido?</li>
+                <li>NOVAMENTE: Comunicar o mínimo possível</li>
+                <li>Se por acaso eu quiser operar sobre agregações</li>
+                <li>Constantes não precisam de estado</li>
+            </ul>
+        </section>
+    </aside>
+
+    <hgroup>
+        <h2>How to make it distributed?</h2>
+
+        <h3>Composing</h3>
+    </hgroup>
+    <article>
+      <pre class="code" data-lang="ppl" style="font-size: 22px;">
+          <textarea>StockTick symbol:IBM => 42 * price#avg * price#stdev every hour</textarea>
+      </pre>
+
+        <div class="centered">
+            <object data="svg/mergeable.svg" type="image/svg+xml"></object>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <hgroup>
+        <h2>How to make it distributed?</h2>
+
+        <h3>What about this?</h3>
+    </hgroup>
+    <article>
+        <pre class="code" data-lang="ppl">
+          <textarea>PageViews page:home => user_id:dcount every month</textarea>
+        </pre>
+
+        <ul>
+            <li>Save millions of user_ids?</li>
+            <li>Share them among cluster nodes?</li>
+            <li>No way!</li>
+        </ul>
+    </article>
+</slide>
+
+<slide class="segue dark nobackground">
+    <aside class="gdbar"><img src="images/intelie-logo.png"></aside>
+    <hgroup class="auto-fadein">
+        <h2>Sketching data structures</h2>
+
+        <h3>Using some algebra</h3>
+    </hgroup>
+</slide>
+
+<slide>
+    <hgroup>
+        <h2>Sketching data structures</h2>
+
+        <h3>Controlled imprecision, saving resources</h3>
+    </hgroup>
+    <article>
+        <ul>
+            <li>Only one iteraction over data (perfect for streams)</li>
+            <li>Limited in space and time</li>
+            <li>A small imprecision introduced, but extremely <strong>efficient</strong></li>
+        </ul>
     </article>
 </slide>
 
@@ -215,6 +373,32 @@ URL: https://code.google.com/p/io-2012-slides
     <aside class="note">
         <section>
             <ul>
+                <li>Hashsets são um array</li>
+                <li>Função de hash aponta para uma posição do array</li>
+                <li>Set membership. Bloom em vez de armazenar o item, somente diz sim ou não</li>
+                <li>Colisão é a parte probabilística (erro calculável)</li>
+                <li>Múltiplas funções de hash, diminuem o erro, mas até um certo ponto</li>
+                <li>Funções de hash independentes par-a-par.</li>
+            </ul>
+        </section>
+    </aside>
+
+    <hgroup>
+        <h2>Bloom Filters</h2>
+
+        <h3>Remember hashsets?</h3>
+    </hgroup>
+    <article>
+        <div class="centered">
+            <object data="svg/bloom_filters.svg" type="image/svg+xml"></object>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
                 <li>Hashes são uniformemente distribuídos</li>
                 <li>Calcular a probabilidade de ter colisão</li>
                 <li>Um pouco mais de matemáticas</li>
@@ -231,23 +415,23 @@ URL: https://code.google.com/p/io-2012-slides
         <h3>No false negatives</h3>
     </hgroup>
     <article class="fade centered">
-        <p>Para $n$ elementos no conjunto, $k$ funções de hash e $m$ bits</p>
+        <p>$n$ elements in the set, $k$ hash functions, $m$ bits</p>
 
         <div class="pseudo-code">
             <div>
-                <span>Probabilidade de não-colisão após $n$ inserções com $k$ funções de hash:</span>
+                <span>No-collision probability after $n$ insertions with $k$ hash functions:</span>
                 \begin{equation*}
                 \left(1-\frac{1}{m}\right)^{kn}
                 \end{equation*}
             </div>
             <div>
-                <span>Invertendo, probabilidade de colisão por função de hash:</span>
+                <span>Probability of collision by hash function</span>
                 \begin{equation*}
                 1-\left(1-\frac{1}{m}\right)^{kn}
                 \end{equation*}
             </div>
             <div>
-                <span>Para $k$ funções de hash:</span>
+                <span>For $k$ hash functions:</span>
                 \begin{equation*}
                 \left(1-\left[1-\frac{1}{m}\right]^{kn}\right)^k
                 \end{equation*}
@@ -257,43 +441,321 @@ URL: https://code.google.com/p/io-2012-slides
 </slide>
 
 <slide>
-    <hgroup>
-        <h2>Code Example</h2>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Mesmo princípio do filtro de Bloom. Mas calcula os quantis. Ocorrência de um elemento em multiset.
+                </li>
+                <li>Usa vários arrays para evitar colisão entre as funções de hash.</li>
+                <li>Custo de memória sublinear.</li>
+                <li>Na prática, funciona como um array probabilístico.</li>
+                <li>Erro também bem definido.</li>
+            </ul>
+        </section>
+    </aside>
 
-        <h3></h3>
+    <hgroup>
+        <h2>Count-Min Sketch</h2>
+
+        <h3>Similiar, but with quantiles</h3>
     </hgroup>
-    <article><p>Media Queries are sweet:</p>
-				<pre class="prettyprint" data-lang="css">
-					@media screen and (max-width: 640px) {
-						#sidebar { display: none; }
-					}
-				</pre>
+    <article>
+        <div class="centered">
+            <object data="svg/countmin_sketch.svg" type="image/svg+xml"></object>
+        </div>
     </article>
 </slide>
 
 <slide>
     <hgroup>
-        <h2>Once more, with JavaScript</h2>
+        <h2>Count-Min Sketch</h2>
 
-        <h3></h3>
+        <h3>Very useful</h3>
     </hgroup>
-    <article><pre class="prettyprint" data-lang="javascript">
-					function isSmall() {
-						return window.matchMedia("(min-device-width: ???)").matches;
-					}
+    <article>
+        <ul>
+            <li>Scalar product</li>
+            <li>Matrix multiplication</li>
+            <li>Range sum query</li>
+        </ul>
+    </article>
+</slide>
 
-					function hasTouch() {
-						return Modernizr.touch;
-					}
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Erro depende somente do tamanho da estrutura.</li>
+                <li>Largura (w) é a quantidade de células, profundidade (d) é a quantidade de funções de hash.</li>
+                <li>Point query é o quantil de um elemento num multiset.</li>
+                <li>Ou o valor do array numa determinada posição.</li>
+                <li>O lado esquerdo é determinístico, o lado direito é probabilístico.</li>
+            </ul>
+        </section>
+    </aside>
 
-					function detectFormFactor() {
-						var device = DESKTOP;
-						if (hasTouch()) {
-							device = isSmall() ? PHONE : TABLET;
-						}
-						return device;
-					}
-				</pre>
+    <hgroup>
+        <h2>Count-Min Sketch</h2>
+
+        <h3>Calculating error</h3>
+    </hgroup>
+    <article>
+        <div>
+            <p>Define width ($w$) and depth ($d$), so that:</p>
+
+            <p class="centered">$w = \lceil e/\epsilon \rceil$ e $d = \lceil \ln{1/\delta} \rceil$.</p>
+        </div>
+        <div>
+            <p>So this is possible to answer point queries ($\hat{a}_i$) where:</p>
+
+            <p class="centered">$a_i \leq \hat{a}_i \leq \epsilon \|a\|$
+
+            <p>
+
+            <p>Right side of inequation remains the probability $1 - \delta$.</p>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>15 linhas em Python.</li>
+                <li>A teoria é complicada, mas a implementação geralmente é simples.</li>
+                <li>Leve em consideração que é uma implementação didática.</li>
+            </ul>
+        </section>
+    </aside>
+
+    <hgroup>
+        <h2>Count-Min Sketch</h2>
+
+        <h3>An example</h3>
+    </hgroup>
+    <article class="smaller">
+<pre class="code" data-lang="python">
+    <textarea>
+class CountMin:
+    def __init__(self, m, k):
+        self.data = [[0] * m for i in range(k)]
+        self.m = m
+        self.k = k
+
+    def add(self, element, count=1):
+        for i in range(self.k):
+            h = mmh3.hash(element, i)
+            self.data[i][h % self.m] += count
+
+    def quantile(self, element):
+        m = 1<<30
+        for i in range(self.k):
+            h = mmh3.hash(element, i)
+            m = min(m, self.data[i][h % self.m])
+        return m    </textarea>
+</pre>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Um conceito natural, mas requer certa atenção para ser observado.</li>
+                <li>256 combinações diferentes. Fixando 0, cai pela metade: 50%.</li>
+                <li>Fixar segundo 0, cai pela metade de novo: 25%.</li>
+            </ul>
+        </section>
+    </aside>
+    <hgroup>
+        <h2>HyperLogLog</h2>
+
+        <h3>Distribuição de bits no hash</h3>
+    </hgroup>
+    <article>
+        <div class="centered">
+            <object data="svg/hll_perc.svg" type="image/svg+xml"></object>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Mudar para frações para facilitar essa visualização.</li>
+                <li>1/8 significa que 1 em cada 8 hashes começam com 000.</li>
+                <li>Meio que dá uma dica que depois de 7 hashes distintos, espero ver um que comece com 000.</li>
+                <li>Se vejo um hash que começa com 000 talvez signifique que a cardinalidade é 8.</li>
+                <li>Como obter 8: 2^3.</li>
+            </ul>
+        </section>
+    </aside>
+    <hgroup>
+        <h2>HyperLogLog</h2>
+
+        <h3>Distribuição de bits no hash</h3>
+    </hgroup>
+    <article>
+        <div class="centered">
+            <object data="svg/hll_frac.svg" type="image/svg+xml"></object>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Com somente um fluxo, seu resultado estará errado.</li>
+                <li>Dividindo a amostra em vários fluxos diferentes e tirando a média, maior chance de estar certo.</li>
+                <li>Partição dos fluxos feita pelos log2m primeiros bits do hash.</li>
+                <li>Bits restantes para determinar quantos 0s tem no começo.</li>
+            </ul>
+        </section>
+    </aside>
+    <hgroup>
+        <h2>HyperLogLog</h2>
+
+        <h3>Uma ideia genial, estimando por baixo.</h3>
+    </hgroup>
+    <article>
+        <p>Escolhe-se $log_2 m$ bits do espaço de hash para corresponderem a $m$ subfluxos ($|M| = m$). A busca pelo
+            prefixo é efetuada nos bits restantes.</p>
+
+        <p>Por exemplo, para $log_2 m = 3$ ($m = 8$):</p>
+
+        <div class="centered">
+            <object data="svg/hll_input.svg" type="image/svg+xml"></object>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Objetivo é manter para cada subfluxo o maior prefixo.</li>
+                <li>Este único inteiro servirá para estimar a cardinalidade deste subfluxo.</li>
+                <li>Então, depois de vários updates...</li>
+            </ul>
+        </section>
+    </aside>
+    <hgroup>
+        <h2>HyperLogLog</h2>
+
+        <h3>Atualizando o array $M$.</h3>
+    </hgroup>
+    <article>
+        <div class="centered">
+            <object data="svg/hll_update.svg" type="image/svg+xml"></object>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Cada subfluxo terá um valor de prefixo máximo visto.</li>
+                <li>Num hashspace de 32bits, estes inteiros podem assumir valores entre 0 e 31.</li>
+                <li>Necessário apenas 5 bits para armazenar cada registrador</li>
+                <li>Por isso LogLog, até 2^32 elementos distintos com 5 bits por registrador</li>
+                <li>log2(log2(2^32)) = 5</li>
+            </ul>
+        </section>
+    </aside>
+    <hgroup>
+        <h2>HyperLogLog</h2>
+
+        <h3>Array $M$ depois de diversos updates.</h3>
+    </hgroup>
+    <article>
+        <div class="centered">
+            <object data="svg/hll_update2.svg" type="image/svg+xml"></object>
+        </div>
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>A estimativa para cada subfluxo. 2^tamanho do maior prefixo</li>
+                <li>Média. Mas não qualquer média. Média harmônica única com resultados relevantes.</li>
+                <li>Corrigir o bias multiplicativo (que sempre leva o valor pra cima)</li>
+            </ul>
+        </section>
+    </aside>
+    <hgroup>
+        <h2>HyperLogLog</h2>
+
+        <h3>Como estimar?</h3>
+    </hgroup>
+    <article>
+        <div>
+            <p>Estimativa de cada registrador:</p>
+
+            <p class="centered">$\hat{E}_i = 2^{M(i)}$</p>
+        </div>
+        <div>
+            <p>Estimativa geral (média harmônica de todas as estimativas):</p>
+
+            <p class="centered">$\hat{E} = \frac{m^2}{\sum_{i=1}^{m} \hat{E}(i)^{-1}} = \frac{m^2}{\sum_{i=1}^{m}
+                2^{-M(i)}}$</p>
+        </div>
+        <div>
+            <p>Estimativa geral (corrigindo o bias multiplicativo):</p>
+
+            <p class="centered">$\hat{E}' = \frac{\alpha_m m^2}{\sum_{i=1}^{m} 2^{-M(i)}}$, onde $\alpha_m = (m
+                \int_0^{\infty} (log_2 (\frac{2+u}{1+u}))^m du)^{-1}$</p>
+        </div>
+
+    </article>
+</slide>
+
+<slide>
+    <aside class="note">
+        <section>
+            <ul>
+                <li>Menos de 20 linhas de Python.</li>
+                <li>Em Java é um pouco mais.</li>
+                <li>Ignorando a otimização de apenas 5 bits por registrador</li>
+                <li>Mais uma vez, didática</li>
+            </ul>
+        </section>
+    </aside>
+    <hgroup>
+        <h2>HyperLogLog</h2>
+
+        <h3>An example</h3>
+    </hgroup>
+    <article>
+<pre class="code" data-lang="python" style="font-size: 18px;">
+    <textarea>
+class HyperLogLog:
+    def __init__(self, log2m):
+        self.log2m = log2m
+        self.m = 1 << log2m
+        self.data = [0]*self.m
+        self.alphaMM = (0.7213 / (1 + 1.079 / self.m)) * self.m * self.m
+
+    def add(self, element):
+        x = mmh3.hash(str(element), 0)
+        a, b = 32-self.log2m, self.log2m
+        i = x >> a
+        v = self._bitscan(x << b, a)
+        self.data[i] = max(self.data[i], v)
+
+    def cardinality(self):
+        estimate = self.alphaMM / sum([2**-v for v in self.data])
+        if estimate <= 2.5 * self.m:
+            zeros = float(self.data.count(0))
+            return round(-self.m * math.log(zeros / self.m))
+        else:
+            return round(estimate)
+    </textarea>
+</pre>
     </article>
 </slide>
 
