@@ -570,7 +570,7 @@ class CountMin:
     <hgroup>
         <h2>HyperLogLog</h2>
 
-        <h3>Distribuição de bits no hash</h3>
+        <h3>Bits distribution in hash</h3>
     </hgroup>
     <article>
         <div class="centered">
@@ -594,7 +594,7 @@ class CountMin:
     <hgroup>
         <h2>HyperLogLog</h2>
 
-        <h3>Distribuição de bits no hash</h3>
+        <h3>Bits distribution in hash</h3>
     </hgroup>
     <article>
         <div class="centered">
@@ -617,13 +617,12 @@ class CountMin:
     <hgroup>
         <h2>HyperLogLog</h2>
 
-        <h3>Uma ideia genial, estimando por baixo.</h3>
+        <h3>Distinct count estimation</h3>
     </hgroup>
     <article>
-        <p>Escolhe-se $log_2 m$ bits do espaço de hash para corresponderem a $m$ subfluxos ($|M| = m$). A busca pelo
-            prefixo é efetuada nos bits restantes.</p>
+        <p>$log_2 m$ bits of the hash space are chosen to correspond to $m$ substreams ($|M| = m$). Search for prefix is made on the remaining bits.</p>
 
-        <p>Por exemplo, para $log_2 m = 3$ ($m = 8$):</p>
+        <p>For example, to $log_2 m = 3$ ($m = 8$):</p>
 
         <div class="centered">
             <object data="svg/hll_input.svg" type="image/svg+xml"></object>
@@ -644,7 +643,7 @@ class CountMin:
     <hgroup>
         <h2>HyperLogLog</h2>
 
-        <h3>Atualizando o array $M$.</h3>
+        <h3>Updating array $M$.</h3>
     </hgroup>
     <article>
         <div class="centered">
@@ -668,7 +667,7 @@ class CountMin:
     <hgroup>
         <h2>HyperLogLog</h2>
 
-        <h3>Array $M$ depois de diversos updates.</h3>
+        <h3>Array $M$ after several updates.</h3>
     </hgroup>
     <article>
         <div class="centered">
@@ -690,22 +689,22 @@ class CountMin:
     <hgroup>
         <h2>HyperLogLog</h2>
 
-        <h3>Como estimar?</h3>
+        <h3>How to estimate?</h3>
     </hgroup>
     <article>
         <div>
-            <p>Estimativa de cada registrador:</p>
+            <p>For each register:</p>
 
             <p class="centered">$\hat{E}_i = 2^{M(i)}$</p>
         </div>
         <div>
-            <p>Estimativa geral (média harmônica de todas as estimativas):</p>
+            <p>General estimative (harmonic average for all estimatives):</p>
 
             <p class="centered">$\hat{E} = \frac{m^2}{\sum_{i=1}^{m} \hat{E}(i)^{-1}} = \frac{m^2}{\sum_{i=1}^{m}
                 2^{-M(i)}}$</p>
         </div>
         <div>
-            <p>Estimativa geral (corrigindo o bias multiplicativo):</p>
+            <p>General estimative (fixing multiplying bias):</p>
 
             <p class="centered">$\hat{E}' = \frac{\alpha_m m^2}{\sum_{i=1}^{m} 2^{-M(i)}}$, onde $\alpha_m = (m
                 \int_0^{\infty} (log_2 (\frac{2+u}{1+u}))^m du)^{-1}$</p>
@@ -728,7 +727,7 @@ class CountMin:
     <hgroup>
         <h2>HyperLogLog</h2>
 
-        <h3>An example</h3>
+        <h3>Implementation example</h3>
     </hgroup>
     <article>
 <pre class="code" data-lang="python" style="font-size: 18px;">
@@ -802,7 +801,9 @@ class HyperLogLog:
 
 </slides>
 
+<!--
 <script>
+
     (function (i, s, o, g, r, a, m) {
         i['GoogleAnalyticsObject'] = r;
         i[r] = i[r] || function () {
@@ -819,6 +820,7 @@ class HyperLogLog:
     ga('send', 'pageview');
 
 </script>
+-->
 
 <!--[if IE]>
 <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
